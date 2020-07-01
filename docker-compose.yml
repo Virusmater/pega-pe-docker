@@ -42,7 +42,7 @@ services:
       - ${PEGA_DUMP}:/resources/  #substitue ${PEGA_DUMP} with directory holding pega.dump file
       
     ports:
-      - 8080:8080     #Use this line only if you have other webservers running on port 8080
+      - 9090:8080 #regular PegaPE is on 9090 port
 
     # this makes sure that pega backend is running before pega prpc is launched
     depends_on:

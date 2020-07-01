@@ -1,10 +1,10 @@
 # Docker for PEGA Personal Edition
 
-### Note: This project currently only supports Pega 8.3 personal edition (this might work with older verisons, but not guaranteed).
+### Note: This project currently only supports Pega 8.4 personal edition (this might work with older verisons, but not guaranteed).
 
 This project is intended to help PEGA enthusiasts deploy and experiment PEGA PRPC Personal Edition using docker. 
 
-This project has been tested against Pega PRPC Personal Edition 8.3 version on a Manjaro 5.3.15 host OS. Those of you who intend to run this on a windows host might have to do some additonal setup in your docker installation to support linux images(these are easily searchable on the internet). These modifications are not specific to this project, but something that has to be done to run linux based docker images on Windows host OS.
+This project has been tested against Pega PRPC Personal Edition 8.4 version on GNU/Linux OS. Those of you who intend to run this on a windows host might have to do some additonal setup in your docker installation to support linux images (these are easily searchable on the internet). These modifications are not specific to this project, but something that has to be done to run linux based docker images on Windows host OS.
 
 "Pega PRPC Personal Edition" will be refered to as "PEGA-PE" for the sake of simplicity in rest of the project & documentation.
 
@@ -57,42 +57,14 @@ This project only provides you with a Dockerfile which can be used to build an i
 
 * Extract the file pega.dump from PEGA-PE zip downloaded as mentioned in Files Prerequisite. For example, pega.dump can be located as **115148_PE_721.zip/data/pega.dump** in PEGA-PE 7.2.1. 
 
-* Mention the location of pega.dump file in the file docker-compose.yml.
+* Put pega.dump in pega-pe-docker/resources/
 
     ```yml
         volumes:
-          - ${PEGA_DUMP}:/tmp/resources/  #substitue $  {PEGA_DUMP} with directory holding pega.dump file
-    ```
-    Instead of directly mentioning the location inside  docker-compose.yml, a neater way will be to use an   environment file. 
-    Create a new file ".env" and add the location for   pega.dump inside "*.env"
-
-
-    Content of .env file in my case is as below as i have   extracted pega.dump to /home/<user>/DockerBuild/  resources/pega.dump
-    ```env
-    PEGA_DUMP=/home/<user>/DockerBuild/resources/
+          - ${PEGA_DUMP}:/resources/
     ```
 
-* Pass username, password & db details to   docker-compose.yml file. These details will be used to    create the backend db, which will be used by PEGA-PE. 
-
-    ```yml
-    environment:
-          - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}  #   substitute .with db password
-          - POSTGRES_USER=${POSTGRES_USER}  # substitute    with db user
-          - POSTGRES_DB=${POSTGRES_DB}  # substitute with   db name
-    ```
-
-    again, the neater way will be to just include these     too in the .env file
-    ```env
-    POSTGRES_PASSWORD=postgres
-    POSTGRES_USER=postgres
-    POSTGRES_DB=postgres
-    PEGA_DUMP=/home/<user>/DockerBuild/resources/
-    ```
-    
-    **Important: Eventhough this project supports use of    any username & password, the base image provided by    Pegasystems has hardcoded username "postgres" inside   one of the sql scripts. Because of this the username  will have to be "postgres".**
-    
-    **Important: POSTGRES_DB value has be "postgres" because    the contents in pega.dump file are specific to     database postgres.**
-
+    **While it is possible to change username, password and database name in .env - I would advse not to do so. Dump from PEGA-PE might rely on those variables.**
 
 ### 3. Prepare for docker image build  of pega web app
 
@@ -100,14 +72,12 @@ This project only provides you with a Dockerfile which can be used to build an i
 
 * Place the files extracted on the previous step to **Project_Root/PegaPRPC-WebApp/resources**
 
-* Download the jdbc driver from [here](https://jdbc.postgresql.org/download/postgresql-42.1.1.jre7.jar) and place in **Project_Root/PegaPRPC-WebApp/resources/jdbc_drivers**
-
 ### 4. Build docker images for postgresql & pega web app
 
 * Run the below command to build the docker images for both postgresql & pega web app
 
     ```bash
-    docker-compose build --no-cache
+    docker-compose build
     ```
     This command will take some time to build the images based on your internet connection speed and your hardware specs. First time run will download  the required base images from internet. 
 

@@ -4,3 +4,4 @@ FROM dimakompot/postgres-pljava:latest
 COPY docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
 COPY scripts /scripts
 RUN chmod -R +x '/scripts'
+ENTRYPOINT ["/scripts/start.sh"]
